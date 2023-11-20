@@ -14,12 +14,12 @@ spec:
       annotations:
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/tls-skip-verify: "true"
-        vault.hashicorp.com/agent-inject-secret-config.txt: "secret/data/webapp/config"
-        vault.hashicorp.com/agent-inject-template-config.txt: |
+        vault.hashicorp.com/agent-inject-secret-config: "secret/data/webapp/config"
+        vault.hashicorp.com/agent-inject-template-config: |
           {{- with secret "secret/data/webapp/config" -}}
           
-             export USERNAME = "{{ .Data.data.username }}",
-             export PASSWORD = "{{ .Data.data.password }}"
+             export USERNAME="{{ .Data.data.username }}"
+             export PASSWORD="{{ .Data.data.password }}"
           
           {{- end }}
         vault.hashicorp.com/role: "webapp"
@@ -30,9 +30,10 @@ spec:
       containers:
       - name: demo-app
         image: nadamekki/vault-demo-app:v2.0.2
-        env:
-        - name: BASH_ENV
-          value: /vault/secrets/config
+        command:
+          ['/bin/bash','-c']
+        args:
+          ['source /vault/secrets/config && npm run start']
         
 ---
 apiVersion: v1
