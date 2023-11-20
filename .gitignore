@@ -2,3 +2,4 @@ manifests/*
 cluster-*
 sealToken
 tls/*
+demo-app/node_modules
